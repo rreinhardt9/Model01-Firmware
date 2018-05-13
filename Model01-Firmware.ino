@@ -35,6 +35,9 @@
 // when the keyboard is connected to a computer (or that computer is powered on)
 #include "Kaleidoscope-LEDEffect-BootGreeting.h"
 
+// LED key heatmap
+#include "Kaleidoscope-Heatmap.h"
+
 // Support for LED modes that set all LEDs to a single color
 #include "Kaleidoscope-LEDEffect-SolidColor.h"
 
@@ -237,7 +240,13 @@ const macro_t *macroAction(uint8_t macroIndex, uint8_t keyState) {
   return MACRO_NONE;
 }
 
-
+// Set colors to be used by heatmap LED effect
+static const cRGB heat_colors[] PROGMEM = {
+  {  0,   0,   0}, // black
+  {255,  25,  25}, // blue
+  { 25, 255,  25}, // green
+  { 25,  25, 255}  // red
+};
 
 // These 'solid' color effect definitions define a rainbow of
 // LED color modes calibrated to draw 500mA or less on the
@@ -304,6 +313,9 @@ void setup() {
     // We start with the LED effect that turns off all the LEDs.
     &LEDOff,
 
+    // Heatmap effect
+    &HeatmapEffect,
+
     // The rainbow effect changes the color of all of the keyboard's keys at the same time
     // running through all the colors of the rainbow.
     &LEDRainbowEffect,
@@ -350,6 +362,11 @@ void setup() {
 
   // We configure the AlphaSquare effect to use RED letters
   AlphaSquare.color = CRGB(255, 0, 0);
+
+  // Heatmap use specified colors array
+  HeatmapEffect.heat_colors = heat_colors;
+  // Specify heatmap array length
+  HeatmapEffect.heat_colors_length = 4;
 
   // We set the brightness of the rainbow effects to 150 (on a scale of 0-255)
   // This draws more than 500mA, but looks much nicer than a dimmer effect
